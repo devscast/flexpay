@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Devscast\Flexpay;
 
 use Devscast\Flexpay\Data\Method;
-use Devscast\Flexpay\Data\Transaction;
 use Devscast\Flexpay\Exception\NetworkException;
 use Devscast\Flexpay\Response\CheckResponse;
 use Devscast\Flexpay\Response\FlexpayResponse;
