@@ -16,7 +16,7 @@ final class PaymentResponse extends FlexpayResponse
 {
     public function __construct(
         public Status $code,
-        public string $message,
+        public string $message = '',
         public ?string $reference = null,
         #[SerializedName('provider_reference')]
         public ?string $providerReference = null,
