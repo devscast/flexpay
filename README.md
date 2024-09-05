@@ -1,7 +1,7 @@
 # Flexpay PHP
 
 ![Lint](https://github.com/devscast/flexpay/actions/workflows/lint.yaml/badge.svg)
-![Test](https://github.com/devscast/flexpay/actions/workflows/test.yaml/badge.svg)
+![Test](https://github.com/devscast/flexpay/actions/workflows/lint.yaml/badge.svg)
 [![Latest Stable Version](https://poser.pugx.org/devscast/flexpay/version)](https://packagist.org/packages/devscast/flexpay)
 [![Total Downloads](https://poser.pugx.org/devscast/flexpay/downloads)](https://packagist.org/packages/devscast/flexpay)
 [![License](https://poser.pugx.org/devscast/flexpay/license)](https://packagist.org/packages/devscast/flexpay)
