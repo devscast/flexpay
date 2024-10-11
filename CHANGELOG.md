@@ -2,7 +2,10 @@
 
 This changelog references the relevant changes (bug and security fixes) done
 
-### 2.0.0 [unreleased]
+## 2.0.1
+- Fixed: vpos urls for production and test environments in `Environment`
+
+### 2.0.0
 - Added: `isSuccessful` to `Transaction` class
 - Breaking Change: `pay` supports both `vpos` and `mobile` request
 - Added: `vpos` and `mobile` method to `Client`
