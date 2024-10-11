@@ -14,23 +14,14 @@ use Webmozart\Assert\Assert;
 final readonly class Credential
 {
     /**
-     * Le token d’autorisation
+     * @param string $token Le token d’autorisation
+     * @param string $merchant Le code Marchand FlexPay, ex: ZANDO
      */
-    public string $token;
-
-    /**
-     * Le code Marchand FlexPay, ex: ZANDO
-     */
-    public string $merchant;
-
     public function __construct(
-        #[\SensitiveParameter] string $token,
-        #[\SensitiveParameter] string $merchant,
+        #[\SensitiveParameter] public string $token,
+        #[\SensitiveParameter] public string $merchant,
     ) {
-        Assert::notEmpty($token, 'The authorization token cannot be empty');
-        Assert::notEmpty($merchant, 'Merchant cannot be empty');
-
-        $this->token = $token;
-        $this->merchant = $merchant;
+        Assert::notEmpty($this->token, 'The authorization token cannot be empty');
+        Assert::notEmpty($this->merchant, 'Merchant cannot be empty');
     }
 }

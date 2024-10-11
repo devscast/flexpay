@@ -14,19 +14,40 @@ enum Environment: string
     case LIVE = 'prod';
     case SANDBOX = 'dev';
 
-    public function getBaseUrl(): string
+    public function getVposAskUrl(): string
+    {
+        return match ($this) {
+            self::LIVE, self::SANDBOX => sprintf('%s/vpos/ask', $this->getBaseUrl()),
+        };
+    }
+
+    public function getMobilePaymentUrl(): string
+    {
+        return match ($this) {
+            self::LIVE, self::SANDBOX => sprintf('%s/paymentService', $this->getBaseUrl()),
+        };
+    }
+
+    public function getVposPaymentUrl(string $orderNumber): string
+    {
+        return match ($this) {
+            self::LIVE => sprintf('https://cardpayment.flexpay.cd/vpos/pay/%s', $orderNumber),
+            self::SANDBOX => sprintf('https://beta-cardpayment.flexpay.cd/vpos/pay/%s', $orderNumber),
+        };
+    }
+
+    public function getCheckStatusUrl(string $orderNumber): string
+    {
+        return match ($this) {
+            self::LIVE, self::SANDBOX => sprintf('%s/check/%s', $this->getBaseUrl(), $orderNumber),
+        };
+    }
+
+    private function getBaseUrl(): string
     {
         return match ($this) {
             self::LIVE => 'https://backend.flexpay.cd/api/rest/v1',
             self::SANDBOX => 'https://beta-backend.flexpay.cd/api/rest/v1',
-        };
-    }
-
-    public function getCardPaymentBaseUrl(): string
-    {
-        return match ($this) {
-            self::LIVE => 'https://cardpayment.flexpay.cd/v1.1/pay',
-            self::SANDBOX => 'https://beta-cardpayment.flexpay.cd/v1.1/pay'
         };
     }
 }

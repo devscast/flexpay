@@ -19,7 +19,7 @@ class NetworkException extends \Exception
         public ?int $status = null
     ) {
         if ($this->status !== null) {
-            parent::__construct($message . ' (HTTP ' . $status . '/' . $type . ')');
+            parent::__construct(sprintf('%s (HTTP %d/%s)', $message, $status, $type));
         } else {
             parent::__construct($message);
         }

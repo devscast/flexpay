@@ -4,11 +4,14 @@ declare(strict_types=1);
 
 namespace Devscast\Flexpay;
 
-use Devscast\Flexpay\Data\Method;
 use Devscast\Flexpay\Exception\NetworkException;
+use Devscast\Flexpay\Request\MobileRequest;
+use Devscast\Flexpay\Request\Request;
+use Devscast\Flexpay\Request\VposRequest;
 use Devscast\Flexpay\Response\CheckResponse;
 use Devscast\Flexpay\Response\FlexpayResponse;
 use Devscast\Flexpay\Response\PaymentResponse;
+use Devscast\Flexpay\Response\VposResponse;
 use Symfony\Component\HttpClient\HttpClient;
 use Symfony\Component\HttpClient\Retry\GenericRetryStrategy;
 use Symfony\Component\HttpClient\RetryableHttpClient;
@@ -23,20 +26,22 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
  *
  * @author bernard-ng <bernard@devscast.tech>
  */
-final readonly class Client
+final class Client
 {
     private HttpClientInterface $http;
 
     private Serializer $serializer;
 
     public function __construct(
-        public Credential $credential,
-        public Environment $environment = Environment::SANDBOX
+        public readonly Credential $credential,
+        public readonly Environment $environment = Environment::SANDBOX,
     ) {
-        $this->serializer = new Serializer(normalizers: [
-            new BackedEnumNormalizer(),
-            new ObjectNormalizer(),
-        ]);
+        $this->serializer = new Serializer(
+            normalizers: [
+                new ObjectNormalizer(),
+                new BackedEnumNormalizer(),
+            ]
+        );
 
         $this->http = new RetryableHttpClient(
             client: HttpClient::create(
@@ -53,33 +58,83 @@ final readonly class Client
     }
 
     /**
-     * Cette interface permet d’envoyer une requête de redirection de paiement à FlexPay
+     * Permet d'envoyer une directement intention de paiement sur le mobile money du client
      *
-     * @throws NetworkException quand une erreur réseau survient
-     * @throws \InvalidArgumentException quand le numéro de téléphone n'est pas fourni pour un paiement mobile
+     * @throws NetworkException
      */
-    public function pay(PaymentEntry $entry, Method $method = Method::MOBILE): PaymentResponse
+    public function mobile(MobileRequest $request): PaymentResponse
     {
-        /**
-         * Définit ici, pour éviter de préciser manuellement le marchant à chaque fois
-         */
-        $entry->setMerchant($this->credential->merchant);
-
-        if ($method === Method::MOBILE && $entry->phone === null) {
-            throw new \InvalidArgumentException('phone number should be provided for mobile payment');
-        }
+        $request->setCredential($this->credential);
 
         try {
             /** @var PaymentResponse $response */
             $response = $this->getMappedData(
                 type: PaymentResponse::class,
-                data: $this->http->request(
-                    method: 'POST',
-                    url: sprintf('%s/paymentService', $this->environment->getBaseUrl()),
-                    options: [
-                        'json' => $this->serializer->normalize($entry),
-                    ]
-                )->toArray()
+                data: $this->http->request('POST', $this->environment->getMobilePaymentUrl(), [
+                    'json' => $request->getPayload(),
+                ])->toArray()
+            );
+
+            return $response;
+        } catch (\Throwable $e) {
+            $this->createExceptionFromResponse($e);
+        }
+    }
+
+    /**
+     * Créer une URL unique de paiement via le gateway de Flexpay
+     * Cela permet d'utiliser différente méthode de paiement
+     * y compris une carte bancaire (VISA, MASTERCARD, etc.)
+     *
+     * @throws NetworkException
+     */
+    public function vpos(VposRequest $request): VposResponse
+    {
+        $request->setCredential($this->credential);
+
+        try {
+            dd(
+                /** @var VposResponse $response */
+                $response = $this->getMappedData(
+                    type: VposResponse::class,
+                    data: $this->http->request('POST', $this->environment->getVposAskUrl(), [
+                        'json' => $request->getPayload(),
+                    ])->toArray()
+                )
+            );
+        } catch (\Throwable $e) {
+            $this->createExceptionFromResponse($e);
+        }
+    }
+
+    /**
+     * @throws NetworkException
+     */
+    public function pay(Request $request): PaymentResponse|VposResponse
+    {
+        return match (true) {
+            $request instanceof MobileRequest => $this->mobile($request),
+            $request instanceof VposRequest => $this->vpos($request),
+            default => throw new \RuntimeException('Unsupported request')
+        };
+    }
+
+    /**
+     * Cette interface permet de vérifier l’état d’une requête de paiement envoyée à FlexPay.
+     *
+     * @param string $orderNumber Le code de la transaction généré par FlexPay lors de la requête de paiement
+     *
+     * @throws NetworkException quand une erreur
+     */
+    public function check(string $orderNumber): CheckResponse
+    {
+        try {
+            /** @var CheckResponse $response */
+            $response = $this->getMappedData(
+                type: CheckResponse::class,
+                data: $this->http
+                    ->request('GET', $this->environment->getCheckStatusUrl($orderNumber))
+                    ->toArray()
             );
 
             return $response;
@@ -97,31 +152,6 @@ final readonly class Client
         $payment = $this->getMappedData(PaymentResponse::class, $data);
 
         return $payment;
-    }
-
-    /**
-     * Cette interface permet de vérifier l’état d’une requête de paiement envoyée à FlexPay.
-     *
-     * @param string $orderNumber Le code de la transaction généré par FlexPay lors de la requête de paiement
-     *
-     * @throws NetworkException quand une erreur
-     */
-    public function check(string $orderNumber): CheckResponse
-    {
-        try {
-            /** @var CheckResponse $response */
-            $response = $this->getMappedData(
-                type: CheckResponse::class,
-                data: $this->http->request(
-                    method: 'GET',
-                    url: sprintf('%s/check/%s', $this->environment->getBaseUrl(), $orderNumber)
-                )->toArray()
-            );
-
-            return $response;
-        } catch (\Throwable $e) {
-            $this->createExceptionFromResponse($e);
-        }
     }
 
     /**

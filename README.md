@@ -36,11 +36,11 @@ $flexpay = new Flexpay(
 ```
 
 ### Create a Payment (Intention)
-```php
-use Devscast\Flexpay\PaymentEntry;
-use Devscast\Flexpay\Data\Currency;
 
-$entry = new PaymentEntry(
+```php
+use Devscast\Flexpay\Data\Currency;use Devscast\Flexpay\Request\MobileRequest;
+
+$entry = new MobileRequest(
     amount: 10, // 10 USD
     currency: Currency::USD,
     phone: "243999999999", // mandatory for mobile money
