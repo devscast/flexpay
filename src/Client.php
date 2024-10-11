@@ -15,6 +15,7 @@ use Devscast\Flexpay\Response\VposResponse;
 use Symfony\Component\HttpClient\HttpClient;
 use Symfony\Component\HttpClient\Retry\GenericRetryStrategy;
 use Symfony\Component\HttpClient\RetryableHttpClient;
+use Symfony\Component\PropertyInfo\Extractor\ConstructorExtractor;
 use Symfony\Component\Serializer\Normalizer\BackedEnumNormalizer;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Serializer\Serializer;
@@ -38,8 +39,8 @@ final class Client
     ) {
         $this->serializer = new Serializer(
             normalizers: [
-                new ObjectNormalizer(),
                 new BackedEnumNormalizer(),
+                new ObjectNormalizer(propertyTypeExtractor: new ConstructorExtractor()),
             ]
         );
 
@@ -93,15 +94,15 @@ final class Client
         $request->setCredential($this->credential);
 
         try {
-            dd(
-                /** @var VposResponse $response */
-                $response = $this->getMappedData(
-                    type: VposResponse::class,
-                    data: $this->http->request('POST', $this->environment->getVposAskUrl(), [
-                        'json' => $request->getPayload(),
-                    ])->toArray()
-                )
+            /** @var VposResponse $response */
+            $response = $this->getMappedData(
+                type: VposResponse::class,
+                data: $this->http->request('POST', $this->environment->getVposAskUrl(), [
+                    'json' => $request->getPayload(),
+                ])->toArray()
             );
+
+            return $response;
         } catch (\Throwable $e) {
             $this->createExceptionFromResponse($e);
         }

@@ -3,6 +3,7 @@
 This changelog references the relevant changes (bug and security fixes) done
 
 ### 2.0.0 [unreleased]
+- Added: `isSuccessful` to `Transaction` class
 - Breaking Change: `pay` supports both `vpos` and `mobile` request
 - Added: `vpos` and `mobile` method to `Client`
 - Added: `VposResponse`, `Request`, `VposRequest`, `MobileRequest` class

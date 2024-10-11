@@ -19,6 +19,7 @@ final readonly class Transaction
      * @param string $createdAt La devise de la transaction
      * @param Status $status Ce code donne le statut de la transaction
      * @param Currency $currency Date de création de la transaction
+     * @param ?string $channel Canal de transaction utilisée
      */
     public function __construct(
         public string $reference,
@@ -28,6 +29,12 @@ final readonly class Transaction
         public Status $status,
         public Currency $currency = Currency::CDF,
         public ?string $orderNumber = null,
+        public ?string $channel = null
     ) {
+    }
+
+    public function isSuccessful(): bool
+    {
+        return $this->status === Status::SUCCESS;
     }
 }
