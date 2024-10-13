@@ -10,12 +10,8 @@ use Symfony\Component\HttpClient\HttpClient;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Webmozart\Assert\Assert;
 
-final class MerchantPayOutRequest extends Request
+final class PayoutRequest extends Request
 {
-    private HttpClientInterface $client;
-
-    private string $apiUrl = 'https://api.flexpay.cd/api/merchantPayOutService';
-
     public function __construct(
         float $amount,
         string $reference,
@@ -26,7 +22,6 @@ final class MerchantPayOutRequest extends Request
         public string $telephone,
         public int $type = 1,
     ) {
-        $this->client = HttpClient::create();
 
         Assert::length($this->telephone, 12, 'The phone number should be 12 characters long, eg: 243123456789');
 
@@ -36,6 +31,7 @@ final class MerchantPayOutRequest extends Request
     public function getPayload(): array
     {
         return [
+            'Authorization' => $this->credentials->token,
             'merchant' => $this->merchant,
             'type' => $this->type,
             'reference' => $this->reference,
