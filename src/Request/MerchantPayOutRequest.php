@@ -7,11 +7,6 @@ namespace Devscast\Flexpay\Request;
 use Devscast\Flexpay\Credential;
 use Devscast\Flexpay\Data\Currency;
 use Symfony\Component\HttpClient\HttpClient;
-use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
-use Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface;
-use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
-use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
-use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Webmozart\Assert\Assert;
 
@@ -49,21 +44,5 @@ final class MerchantPayOutRequest extends Request
             'currency' => $this->currency->value,
             'callbackUrl' => $this->callbackUrl,
         ];
-    }
-
-    /**
-     * @throws TransportExceptionInterface
-     * @throws ServerExceptionInterface
-     * @throws RedirectionExceptionInterface
-     * @throws DecodingExceptionInterface
-     * @throws ClientExceptionInterface
-     */
-    public function sendRequest(): array
-    {
-        $response = $this->client->request('POST', $this->apiUrl, [
-            'json' => $this->getPayload(),
-        ]);
-
-        return $response->toArray();
     }
 }
