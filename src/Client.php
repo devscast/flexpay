@@ -5,11 +5,12 @@ declare(strict_types=1);
 namespace Devscast\Flexpay;
 
 use Devscast\Flexpay\Exception\NetworkException;
+use Devscast\Flexpay\Request\MerchantPayOutRequest;
 use Devscast\Flexpay\Request\MobileRequest;
-use Devscast\Flexpay\Request\Request;
 use Devscast\Flexpay\Request\VposRequest;
 use Devscast\Flexpay\Response\CheckResponse;
 use Devscast\Flexpay\Response\FlexpayResponse;
+use Devscast\Flexpay\Response\MerchantPayOutResponse;
 use Devscast\Flexpay\Response\PaymentResponse;
 use Devscast\Flexpay\Response\VposResponse;
 use Symfony\Component\HttpClient\HttpClient;
@@ -56,6 +57,25 @@ final class Client
             strategy: new GenericRetryStrategy(delayMs: 500),
             maxRetries: 3
         );
+    }
+
+    public function merchantPayOut(MerchantPayOutRequest $request): MerchantPayOutResponse
+    {
+        $request->setCredential($this->credential);
+
+        try {
+            /** @var MerchantPayOutResponse $response */
+            $response = $this->getMappedData(
+                type: MerchantPayOutResponse::class,
+                data: $this->http->request('POST', $this->environment->getMerchantPayOutUrl(), [
+                    'json' => $request->getPayload(),
+                ])->toArray()
+            );
+
+            return $response;
+        } catch (\Throwable $e) {
+            $this->createExceptionFromResponse($e);
+        }
     }
 
     /**
@@ -106,18 +126,6 @@ final class Client
         } catch (\Throwable $e) {
             $this->createExceptionFromResponse($e);
         }
-    }
-
-    /**
-     * @throws NetworkException
-     */
-    public function pay(Request $request): PaymentResponse|VposResponse
-    {
-        return match (true) {
-            $request instanceof MobileRequest => $this->mobile($request),
-            $request instanceof VposRequest => $this->vpos($request),
-            default => throw new \RuntimeException('Unsupported request')
-        };
     }
 
     /**

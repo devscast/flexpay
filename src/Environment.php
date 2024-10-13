@@ -44,6 +44,14 @@ enum Environment: string
         };
     }
 
+    public function getMerchantPayOutUrl(): string
+    {
+        return match ($this) {
+            self::LIVE => 'https://backend.flexpay.cd/merchant/payout',
+            self::SANDBOX => sprintf('%s/merchant/payout', $this->getBaseUrl()),
+        };
+    }
+
     private function getBaseUrl(): string
     {
         return match ($this) {
