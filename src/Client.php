@@ -13,6 +13,7 @@ use Devscast\Flexpay\Response\CheckResponse;
 use Devscast\Flexpay\Response\FlexpayResponse;
 use Devscast\Flexpay\Response\MerchantPayOutResponse;
 use Devscast\Flexpay\Response\PaymentResponse;
+use Devscast\Flexpay\Response\PayoutResponse;
 use Devscast\Flexpay\Response\VposResponse;
 use Symfony\Component\HttpClient\HttpClient;
 use Symfony\Component\HttpClient\Retry\GenericRetryStrategy;
@@ -60,14 +61,14 @@ final class Client
         );
     }
 
-    public function PayOut(PayoutRequest $request): MerchantPayOutResponse
+    public function PayOut(PayoutRequest $request): PayoutResponse
     {
         $request->setCredential($this->credential);
 
         try {
-            /** @var MerchantPayOutResponse $response */
+            /** @var PayoutResponse $response */
             $response = $this->getMappedData(
-                type: MerchantPayOutResponse::class,
+                type: PayoutResponse::class,
                 data: $this->http->request('POST', $this->environment->getPayoutUrl(), [
                     'json' => $request->getPayload(),
                 ])->toArray()
