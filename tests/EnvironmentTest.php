@@ -34,11 +34,11 @@ final class EnvironmentTest extends TestCase
     public function testGetVposAskUrl(): void
     {
         $this->assertEquals(
-            'https://cardpayment.flexpay.cd/api/rest/v1/vpos/ask',
+            'https://cardpayment.flexpay.cd/v1.1/pay',
             $this->prod->getVposAskUrl()
         );
         $this->assertEquals(
-            'https://beta-cardpayment.flexpay.cd/api/rest/v1/vpos/ask',
+            'https://beta-cardpayment.flexpay.cd/v1.1/pay',
             $this->dev->getVposAskUrl()
         );
     }
