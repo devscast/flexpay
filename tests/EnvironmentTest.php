@@ -31,7 +31,7 @@ final class EnvironmentTest extends TestCase
         $this->assertEquals(Environment::SANDBOX, Environment::from('dev'));
     }
 
-    public function testGetVposAskUrl(): void
+    public function testGetCardPaymentUrl(): void
     {
         $this->assertEquals(
             'https://cardpayment.flexpay.cd/v1.1/pay',
@@ -52,18 +52,6 @@ final class EnvironmentTest extends TestCase
         $this->assertEquals(
             'https://beta-backend.flexpay.cd/api/rest/v1/paymentService',
             $this->dev->getMobilePaymentUrl()
-        );
-    }
-
-    public function testGetVposPaymentUrl(): void
-    {
-        $this->assertEquals(
-            'https://cardpayment.flexpay.cd/vpos/pay/123456',
-            $this->prod->getVposPaymentUrl('123456')
-        );
-        $this->assertEquals(
-            'https://beta-cardpayment.flexpay.cd/vpos/pay/123456',
-            $this->dev->getVposPaymentUrl('123456')
         );
     }
 

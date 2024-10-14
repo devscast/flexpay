@@ -7,11 +7,11 @@ namespace Devscast\Flexpay\Response;
 use Devscast\Flexpay\Data\Status;
 
 /**
- * Class VposResponse.
+ * Class CardResponse.
  *
  * @author bernard-ng <bernard@devscast.tech>
  */
-final class VposResponse extends FlexpayResponse
+final class CardResponse extends FlexpayResponse
 {
     public function __construct(
         public Status $code,

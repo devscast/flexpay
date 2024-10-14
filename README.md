@@ -39,7 +39,7 @@ $flexpay = new Flexpay(
 
 ```php
 use Devscast\Flexpay\Data\Currency;
-use Devscast\Flexpay\Request\VposRequest;
+use Devscast\Flexpay\Request\CardRequest;
 use Devscast\Flexpay\Request\MobileRequest;
 
 $mobile = new MobileRequest(
@@ -51,7 +51,7 @@ $mobile = new MobileRequest(
     callbackUrl: "your_website_webhook_url",
 );
 
-$card = new VposRequest(
+$card = new CardRequest(
     amount: 10, // 10 USD
     currency: Currency::USD,
     reference: "your_unique_transaction_reference",

@@ -9,9 +9,9 @@ use PHPUnit\Framework\TestCase;
 use Devscast\Flexpay\Credential;
 use Devscast\Flexpay\Data\Currency;
 use Devscast\Flexpay\Data\Transaction;
-use Devscast\Flexpay\Request\VposRequest;
+use Devscast\Flexpay\Request\CardRequest;
 use Devscast\Flexpay\Request\MobileRequest;
-use Devscast\Flexpay\Response\VposResponse;
+use Devscast\Flexpay\Response\CardResponse;
 use Devscast\Flexpay\Response\CheckResponse;
 use Devscast\Flexpay\Response\PaymentResponse;
 use Symfony\Component\HttpClient\MockHttpClient;
@@ -41,23 +41,26 @@ final class ClientTest extends TestCase
         return new MockResponse((string) file_get_contents(__DIR__ . '/fixtures/' . $file));
     }
 
-    public function testVpos(): void
+    public function testCard(): void
     {
-        $flexpay = $this->getFlexpay($this->getResponse('vpos_ask.json'));
-        $request = new VposRequest(
+        $flexpay = $this->getFlexpay($this->getResponse('card_success.json'));
+        $request = new CardRequest(
             amount: 1,
             reference: 'ref',
             currency: Currency::USD,
+            description: 'test',
             callbackUrl: 'http://localhost:8000/callback',
+            approveUrl: 'http://localhost:8000/approve',
+            cancelUrl: 'http://localhost:8000/cancel',
+            declineUrl: 'http://localhost:8000/decline',
             homeUrl: 'http://localhost:8000/home',
-            approveUrl: 'http://localhost:8000/approve'
         );
-        $response = $flexpay->vpos($request);
+        $response = $flexpay->card($request);
 
-        $this->assertInstanceOf(VposResponse::class, $response);
+        $this->assertInstanceOf(CardResponse::class, $response);
         $this->assertTrue($response->isSuccessful());
-        $this->assertEquals('6708a4708d470_1728619632', $response->orderNumber);
-        $this->assertEquals('https://beta-cardpayment.flexpay.cd/vpos/pay/6708a4708d470_1728619632', $response->url);
+        $this->assertEquals('O42iABI27568020268434827', $response->orderNumber);
+        $this->assertEquals('https://gwvisa.flexpay.cd/checkout/bbba6b699af8a70e9cfa010d6d12dba5_670d206b7defb', $response->url);
     }
 
     public function testSuccessCheck(): void

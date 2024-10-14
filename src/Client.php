@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace Devscast\Flexpay;
 
 use Devscast\Flexpay\Exception\NetworkException;
+use Devscast\Flexpay\Request\CardRequest;
 use Devscast\Flexpay\Request\MobileRequest;
 use Devscast\Flexpay\Request\Request;
-use Devscast\Flexpay\Request\VposRequest;
+use Devscast\Flexpay\Response\CardResponse;
 use Devscast\Flexpay\Response\CheckResponse;
 use Devscast\Flexpay\Response\FlexpayResponse;
 use Devscast\Flexpay\Response\PaymentResponse;
-use Devscast\Flexpay\Response\VposResponse;
 use Symfony\Component\HttpClient\HttpClient;
 use Symfony\Component\HttpClient\Retry\GenericRetryStrategy;
 use Symfony\Component\HttpClient\RetryableHttpClient;
@@ -89,14 +89,14 @@ final class Client
      *
      * @throws NetworkException
      */
-    public function vpos(VposRequest $request): VposResponse
+    public function card(CardRequest $request): CardResponse
     {
         $request->setCredential($this->credential);
 
         try {
-            /** @var VposResponse $response */
+            /** @var CardResponse $response */
             $response = $this->getMappedData(
-                type: VposResponse::class,
+                type: CardResponse::class,
                 data: $this->http->request('POST', $this->environment->getVposAskUrl(), [
                     'json' => $request->getPayload(),
                 ])->toArray()
@@ -111,11 +111,11 @@ final class Client
     /**
      * @throws NetworkException
      */
-    public function pay(Request $request): PaymentResponse|VposResponse
+    public function pay(Request $request): PaymentResponse|CardResponse
     {
         return match (true) {
             $request instanceof MobileRequest => $this->mobile($request),
-            $request instanceof VposRequest => $this->vpos($request),
+            $request instanceof CardRequest => $this->card($request),
             default => throw new \RuntimeException('Unsupported request')
         };
     }
