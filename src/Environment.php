@@ -17,8 +17,8 @@ enum Environment: string
     public function getVposAskUrl(): string
     {
         return match ($this) {
-            self::LIVE => 'https://cardpayment.flexpay.cd/api/rest/v1/vpos/ask',
-            self::SANDBOX => 'https://beta-cardpayment.flexpay.cd/api/rest/v1/vpos/ask',
+            self::LIVE => 'https://cardpayment.flexpay.cd/v1.1/pay',
+            self::SANDBOX => 'https://beta-cardpayment.flexpay.cd/v1.1/pay',
         };
     }
 
