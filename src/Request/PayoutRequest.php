@@ -6,8 +6,7 @@ namespace Devscast\Flexpay\Request;
 
 use Devscast\Flexpay\Credential;
 use Devscast\Flexpay\Data\Currency;
-use Symfony\Component\HttpClient\HttpClient;
-use Symfony\Contracts\HttpClient\HttpClientInterface;
+use Devscast\Flexpay\Data\TransactionType;
 use Webmozart\Assert\Assert;
 
 final class PayoutRequest extends Request
@@ -20,7 +19,7 @@ final class PayoutRequest extends Request
         public string $phone,
         public Credential $credentials,
         public string $telephone,
-        public int $type = 1,
+        public TransactionType $type,
     ) {
 
         Assert::length($this->telephone, 12, 'The phone number should be 12 characters long, eg: 243123456789');
@@ -33,7 +32,7 @@ final class PayoutRequest extends Request
         return [
             'Authorization' => $this->credentials->token,
             'merchant' => $this->merchant,
-            'type' => $this->type,
+            'type' => $this->type->getType(),
             'reference' => $this->reference,
             'phone' => $this->telephone,
             'amount' => $this->amount,
