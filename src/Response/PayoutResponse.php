@@ -6,7 +6,6 @@ namespace Devscast\Flexpay\Response;
 
 use Devscast\Flexpay\Data\Status;
 
-
 final class PayoutResponse extends FlexpayResponse
 {
     public function __construct(
@@ -15,6 +14,4 @@ final class PayoutResponse extends FlexpayResponse
         public ?string $orderNumber = null,
     ) {
     }
-
-
 }

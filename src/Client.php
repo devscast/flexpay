@@ -5,13 +5,12 @@ declare(strict_types=1);
 namespace Devscast\Flexpay;
 
 use Devscast\Flexpay\Exception\NetworkException;
-use Devscast\Flexpay\Request\PayoutRequest;
 use Devscast\Flexpay\Request\MobileRequest;
+use Devscast\Flexpay\Request\PayoutRequest;
 use Devscast\Flexpay\Request\Request;
 use Devscast\Flexpay\Request\VposRequest;
 use Devscast\Flexpay\Response\CheckResponse;
 use Devscast\Flexpay\Response\FlexpayResponse;
-use Devscast\Flexpay\Response\MerchantPayOutResponse;
 use Devscast\Flexpay\Response\PaymentResponse;
 use Devscast\Flexpay\Response\PayoutResponse;
 use Devscast\Flexpay\Response\VposResponse;
@@ -61,7 +60,12 @@ final class Client
         );
     }
 
-    public function PayOut(PayoutRequest $request): PayoutResponse
+    /**
+     * Permet d'envoyer une intention de paiement sur le mobile money du client
+     *
+     * @throws NetworkException
+     */
+    public function payout(PayoutRequest $request): PayoutResponse
     {
         $request->setCredential($this->credential);
 
@@ -133,12 +137,12 @@ final class Client
     /**
      * @throws NetworkException
      */
-    public function pay(Request $request): PaymentResponse|VposResponse
+    public function pay(Request $request): PaymentResponse|VposResponse|PayoutResponse
     {
         return match (true) {
             $request instanceof MobileRequest => $this->mobile($request),
             $request instanceof VposRequest => $this->vpos($request),
-            $request instanceof PayoutRequest => $this->merchantPayOut($request),
+            $request instanceof PayoutRequest => $this->payout($request),
 
             default => throw new \RuntimeException('Unsupported request')
         };

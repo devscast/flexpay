@@ -5,13 +5,14 @@ namespace Devscast\Flexpay\Data;
 class TransactionType
 {
     private const MOBILE_MONEY = 1;
+
     private const BANK_CARD = 2;
 
     private int $type;
 
     public function __construct(int $type)
     {
-        if (!in_array($type, [self::MOBILE_MONEY, self::BANK_CARD])) {
+        if (! in_array($type, [self::MOBILE_MONEY, self::BANK_CARD])) {
             throw new \InvalidArgumentException('Invalid transaction type');
         }
 
@@ -33,5 +34,4 @@ class TransactionType
     {
         return $this->type === self::BANK_CARD;
     }
-
 }
