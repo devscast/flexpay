@@ -30,9 +30,9 @@ final class PayoutRequest extends Request
     public function getPayload(): array
     {
         return [
-            'Authorization' => $this->credentials->token,
+            'authorization' => sprintf('Bearer %s', $this->credentials->token),
             'merchant' => $this->merchant,
-            'type' => $this->type->getType(),
+            'type' => $this->type->value,
             'reference' => $this->reference,
             'phone' => $this->telephone,
             'amount' => $this->amount,

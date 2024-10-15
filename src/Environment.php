@@ -55,7 +55,7 @@ enum Environment: string
     private function getBaseUrl(): string
     {
         return match ($this) {
-            self::LIVE => 'https://backend.flexpay.cd/api/rest/v1',
+            self::LIVE => 'http://ip:port/api/rest/v1/merchantPayOutService',
             self::SANDBOX => 'https://beta-backend.flexpay.cd/api/rest/v1',
         };
     }
