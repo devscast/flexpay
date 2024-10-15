@@ -35,11 +35,11 @@ final class EnvironmentTest extends TestCase
     {
         $this->assertEquals(
             'https://cardpayment.flexpay.cd/v1.1/pay',
-            $this->prod->getVposAskUrl()
+            $this->prod->getCardPaymentUrl()
         );
         $this->assertEquals(
             'https://beta-cardpayment.flexpay.cd/v1.1/pay',
-            $this->dev->getVposAskUrl()
+            $this->dev->getCardPaymentUrl()
         );
     }
 

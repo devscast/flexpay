@@ -97,7 +97,7 @@ final class Client
             /** @var CardResponse $response */
             $response = $this->getMappedData(
                 type: CardResponse::class,
-                data: $this->http->request('POST', $this->environment->getVposAskUrl(), [
+                data: $this->http->request('POST', $this->environment->getCardPaymentUrl(), [
                     'json' => $request->getPayload(),
                 ])->toArray()
             );
