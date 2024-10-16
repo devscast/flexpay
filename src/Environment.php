@@ -36,11 +36,19 @@ enum Environment: string
         };
     }
 
+    public function getPayoutUrl(): string
+    {
+        return match ($this) {
+            self::LIVE => sprintf('%s/merchantPayOutService', $this->getBaseUrl()),
+            self::SANDBOX => sprintf('%s/merchantPayOutService', $this->getBaseUrl()),
+        };
+    }
+
     private function getBaseUrl(): string
     {
         return match ($this) {
-            self::LIVE => 'https://backend.flexpay.cd/api/rest/v1',
-            self::SANDBOX => 'https://beta-backend.flexpay.cd/api/rest/v1',
+            self::LIVE => sprintf('%s/merchantPayOutService', $this->getBaseUrl()),
+            self::SANDBOX => sprintf('%s/merchantPayOutService', $this->getBaseUrl())
         };
     }
 }
