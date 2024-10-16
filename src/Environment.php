@@ -14,11 +14,11 @@ enum Environment: string
     case LIVE = 'prod';
     case SANDBOX = 'dev';
 
-    public function getVposAskUrl(): string
+    public function getCardPaymentUrl(): string
     {
         return match ($this) {
-            self::LIVE => 'https://cardpayment.flexpay.cd/api/rest/v1/vpos/ask',
-            self::SANDBOX => 'https://beta-cardpayment.flexpay.cd/api/rest/v1/vpos/ask',
+            self::LIVE => 'https://cardpayment.flexpay.cd/v1.1/pay',
+            self::SANDBOX => 'https://beta-cardpayment.flexpay.cd/v1.1/pay',
         };
     }
 
@@ -26,14 +26,6 @@ enum Environment: string
     {
         return match ($this) {
             self::LIVE, self::SANDBOX => sprintf('%s/paymentService', $this->getBaseUrl()),
-        };
-    }
-
-    public function getVposPaymentUrl(string $orderNumber): string
-    {
-        return match ($this) {
-            self::LIVE => sprintf('https://cardpayment.flexpay.cd/vpos/pay/%s', $orderNumber),
-            self::SANDBOX => sprintf('https://beta-cardpayment.flexpay.cd/vpos/pay/%s', $orderNumber),
         };
     }
 
