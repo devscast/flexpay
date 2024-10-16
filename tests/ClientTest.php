@@ -76,9 +76,8 @@ final class ClientTest extends TestCase
             reference: 'ref',
             currency: Currency::USD,
             callbackUrl: 'http://localhost:8000/callback',
-            credentials: '',
-            telephone: '243123456789',
-            type: TransactionType::CARD
+            phone: '243123456789',
+            type: 1
         );
 
         $response = $flexpay->payout($request);
