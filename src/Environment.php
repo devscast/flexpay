@@ -47,16 +47,16 @@ enum Environment: string
     public function getPayoutUrl(): string
     {
         return match ($this) {
-            self::LIVE => ': http://ip:port/api/rest/v1/merchantPayOutService',
-            self::SANDBOX => sprintf('%s/merchant/payout', $this->getBaseUrl()),
+            self::LIVE => sprintf('%s/merchantPayOutService', $this->getBaseUrl()),
+            self::SANDBOX => sprintf('%s/merchantPayOutService', $this->getBaseUrl()),
         };
     }
 
     private function getBaseUrl(): string
     {
         return match ($this) {
-            self::LIVE => 'http://ip:port/api/rest/v1/merchantPayOutService',
-            self::SANDBOX => 'https://beta-backend.flexpay.cd/api/rest/v1',
+            self::LIVE => sprintf('%s/merchantPayOutService', $this->getBaseUrl()),
+            self::SANDBOX => sprintf('%s/merchantPayOutService', $this->getBaseUrl())
         };
     }
 }

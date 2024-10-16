@@ -43,6 +43,7 @@ final class EnvironmentTest extends TestCase
         );
     }
 
+
     public function testGetMobilePaymentUrl(): void
     {
         $this->assertEquals(
@@ -52,6 +53,19 @@ final class EnvironmentTest extends TestCase
         $this->assertEquals(
             'https://beta-backend.flexpay.cd/api/rest/v1/paymentService',
             $this->dev->getMobilePaymentUrl()
+        );
+    }
+
+    public function testGetPayoutUrl(): void
+    {
+        $this->assertEquals(
+            'https://backend.flexpay.cd/api/rest/v1/merchantPayOutService',
+            $this->prod->getPayoutUrl()
+        );
+
+        $this->assertEquals(
+            'https://beta-backend.flexpay.cd/api/rest/v1/merchantPayOutService',
+            $this->dev->getPayoutUrl()
         );
     }
 

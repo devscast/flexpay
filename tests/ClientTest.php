@@ -5,6 +5,10 @@ declare(strict_types=1);
 namespace Devscast\Flexpay\Tests;
 
 use Devscast\Flexpay\Client;
+use Devscast\Flexpay\Data\TransactionType;
+use Devscast\Flexpay\Exception\NetworkException;
+use Devscast\Flexpay\Request\PayoutRequest;
+use Devscast\Flexpay\Response\PayoutResponse;
 use PHPUnit\Framework\TestCase;
 use Devscast\Flexpay\Credential;
 use Devscast\Flexpay\Data\Currency;
@@ -60,6 +64,30 @@ final class ClientTest extends TestCase
         $this->assertEquals('https://beta-cardpayment.flexpay.cd/vpos/pay/6708a4708d470_1728619632', $response->url);
     }
 
+    /**
+     * @throws NetworkException
+     */
+    public function testPayout(): void
+    {
+        $flexpay = $this->getFlexpay($this->getResponse('payout.json'));
+
+        $request = new PayoutRequest(
+            amount: 10,
+            reference: 'ref',
+            currency: Currency::USD,
+            callbackUrl: 'http://localhost:8000/callback',
+            credentials: '',
+            telephone: '243123456789',
+            type: TransactionType::CARD
+        );
+
+        $response = $flexpay->payout($request);
+
+        $this->assertInstanceOf(PayoutResponse::class,$response);
+        $this->assertTrue($response->isSuccessful());
+        $this->assertEquals('6708a4708d470_1728619632', $response->orderNumber);
+
+    }
     public function testSuccessCheck(): void
     {
         $flexpay = $this->getFlexpay($this->getResponse('check_success.json'));
@@ -98,6 +126,8 @@ final class ClientTest extends TestCase
         $this->assertTrue($response->isSuccessful());
         $this->assertEquals('DtX9SmCYojWW243123456789', $response->orderNumber);
     }
+
+
 
     public function testHandleCallback(): void
     {

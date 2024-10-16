@@ -16,7 +16,6 @@ final class PayoutRequest extends Request
         string $reference,
         Currency $currency,
         string $callbackUrl,
-        public string $phone,
         public Credential $credentials,
         public string $telephone,
         public TransactionType $type,
