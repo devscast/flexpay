@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Devscast\Flexpay\Tests;
 
-use PHPUnit\Framework\TestCase;
 use Devscast\Flexpay\Environment;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class EnvironmentTest.
@@ -15,9 +15,10 @@ use Devscast\Flexpay\Environment;
 final class EnvironmentTest extends TestCase
 {
     private Environment $dev;
+
     private Environment $prod;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         $this->dev = Environment::SANDBOX;
         $this->prod = Environment::LIVE;
@@ -42,7 +43,6 @@ final class EnvironmentTest extends TestCase
             $this->dev->getCardPaymentUrl()
         );
     }
-
 
     public function testGetMobilePaymentUrl(): void
     {

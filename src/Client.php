@@ -60,10 +60,10 @@ final class Client
         );
     }
 
-
     /**
-     * Permet d'envoyer une directement intention de paiement sur le mobile money du client
+     * Cette interface permet d’envoyer une requête de paiement à FlexPay
      *
+     * @since flexpay v1
      * @throws NetworkException
      */
     public function mobile(MobileRequest $request): PaymentResponse
@@ -86,10 +86,12 @@ final class Client
     }
 
     /**
-     * Créer une URL unique de paiement via le gateway de Flexpay
-     * Cela permet d'utiliser différente méthode de paiement
-     * y compris une carte bancaire (VISA, MASTERCARD, etc.)
+     * Cette interface permet d’envoyer une requête de paiement à FlexPay
+     * Ce paiement va se faire en deux étapes :
+     * - Générer l’url de paiement
+     * - Redirection vers la page de paiements
      *
+     * @since flexpay v1.1
      * @throws NetworkException
      */
     public function card(CardRequest $request): CardResponse
@@ -128,6 +130,7 @@ final class Client
      *
      * @param string $orderNumber Le code de la transaction généré par FlexPay lors de la requête de paiement
      *
+     * @since flexpay v1
      * @throws NetworkException quand une erreur
      */
     public function check(string $orderNumber): CheckResponse
@@ -146,10 +149,12 @@ final class Client
             $this->createExceptionFromResponse($e);
         }
     }
-  
+
     /**
-     * Permet d'envoyer une intention de paiement sur le mobile money du client
+     * Cette interface permet à un marchand d’envoyer à partir de son compte de l’argent électronique vers un
+     * numéro de téléphone qui a un compte mobile money.
      *
+     * @since flexpay v1.1
      * @throws NetworkException
      */
     public function payout(PayoutRequest $request): PayoutResponse
@@ -172,7 +177,7 @@ final class Client
     }
 
     /**
-     * Cette interface permet d'obtenir une réponse de paiement provenant de FlexPay
+     * Cette interface permet de vérifier l’état d’une requête de paiement envoyée à FlexPay
      */
     public function handleCallback(array $data): PaymentResponse
     {

@@ -5,19 +5,19 @@ declare(strict_types=1);
 namespace Devscast\Flexpay\Tests;
 
 use Devscast\Flexpay\Client;
-use Devscast\Flexpay\Data\TransactionType;
-use Devscast\Flexpay\Exception\NetworkException;
-use Devscast\Flexpay\Request\PayoutRequest;
-use Devscast\Flexpay\Response\PayoutResponse;
-use PHPUnit\Framework\TestCase;
 use Devscast\Flexpay\Credential;
 use Devscast\Flexpay\Data\Currency;
 use Devscast\Flexpay\Data\Transaction;
+use Devscast\Flexpay\Data\Type;
+use Devscast\Flexpay\Exception\NetworkException;
 use Devscast\Flexpay\Request\CardRequest;
 use Devscast\Flexpay\Request\MobileRequest;
+use Devscast\Flexpay\Request\PayoutRequest;
 use Devscast\Flexpay\Response\CardResponse;
 use Devscast\Flexpay\Response\CheckResponse;
 use Devscast\Flexpay\Response\PaymentResponse;
+use Devscast\Flexpay\Response\PayoutResponse;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpClient\MockHttpClient;
 use Symfony\Component\HttpClient\Response\MockResponse;
 
@@ -28,23 +28,6 @@ use Symfony\Component\HttpClient\Response\MockResponse;
  */
 final class ClientTest extends TestCase
 {
-    private function getFlexpay(callable|MockResponse $mock): Client
-    {
-        $flexpay = new Client(new Credential('token', 'ZONDO'));
-        $reflection = new \ReflectionClass($flexpay);
-
-        $http = $reflection->getProperty('http');
-        $http->setAccessible(true);
-        $http->setValue($flexpay, new MockHttpClient($mock));
-
-        return $flexpay;
-    }
-
-    private function getResponse(string $file): MockResponse
-    {
-        return new MockResponse((string) file_get_contents(__DIR__ . '/fixtures/' . $file));
-    }
-
     public function testCard(): void
     {
         $flexpay = $this->getFlexpay($this->getResponse('card_success.json'));
@@ -72,7 +55,7 @@ final class ClientTest extends TestCase
      */
     public function testPayout(): void
     {
-        $flexpay = $this->getFlexpay($this->getResponse('payout.json'));
+        $flexpay = $this->getFlexpay($this->getResponse('payout_success.json'));
 
         $request = new PayoutRequest(
             amount: 10,
@@ -80,16 +63,17 @@ final class ClientTest extends TestCase
             currency: Currency::USD,
             callbackUrl: 'http://localhost:8000/callback',
             phone: '243123456789',
-            type: 1
+            type: Type::MOBILE
         );
 
         $response = $flexpay->payout($request);
 
-        $this->assertInstanceOf(PayoutResponse::class,$response);
+        $this->assertInstanceOf(PayoutResponse::class, $response);
         $this->assertTrue($response->isSuccessful());
-        $this->assertEquals('6708a4708d470_1728619632', $response->orderNumber);
-
+        $this->assertEquals('Transaction envoyée avec succès.', $response->message);
+        $this->assertEquals('SQeCGunXEGnr243815877848', $response->orderNumber);
     }
+
     public function testSuccessCheck(): void
     {
         $flexpay = $this->getFlexpay($this->getResponse('check_success.json'));
@@ -129,8 +113,6 @@ final class ClientTest extends TestCase
         $this->assertEquals('DtX9SmCYojWW243123456789', $response->orderNumber);
     }
 
-
-
     public function testHandleCallback(): void
     {
         /** @var array $data */
@@ -142,5 +124,22 @@ final class ClientTest extends TestCase
         $this->assertTrue($response->isSuccessful());
         $this->assertEquals('ZDN000003', $response->reference);
         $this->assertEquals('UBGC8s9L3VBm243815877848', $response->orderNumber);
+    }
+
+    private function getFlexpay(callable|MockResponse $mock): Client
+    {
+        $flexpay = new Client(new Credential('token', 'ZONDO'));
+        $reflection = new \ReflectionClass($flexpay);
+
+        $http = $reflection->getProperty('http');
+        $http->setAccessible(true);
+        $http->setValue($flexpay, new MockHttpClient($mock));
+
+        return $flexpay;
+    }
+
+    private function getResponse(string $file): MockResponse
+    {
+        return new MockResponse((string) file_get_contents(__DIR__ . '/fixtures/' . $file));
     }
 }

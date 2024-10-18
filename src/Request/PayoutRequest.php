@@ -5,8 +5,14 @@ declare(strict_types=1);
 namespace Devscast\Flexpay\Request;
 
 use Devscast\Flexpay\Data\Currency;
+use Devscast\Flexpay\Data\Type;
 use Webmozart\Assert\Assert;
 
+/**
+ * Class PayoutRequest.
+ *
+ * @author Rooney kalumba
+ */
 final class PayoutRequest extends Request
 {
     public function __construct(
@@ -15,9 +21,8 @@ final class PayoutRequest extends Request
         Currency $currency,
         string $callbackUrl,
         public string $phone,
-        public int $type = 1,
+        public Type $type = Type::MOBILE,
     ) {
-
         Assert::length($this->phone, 12, 'The phone number should be 12 characters long, eg: 243123456789');
 
         parent::__construct($amount, $reference, $currency, $callbackUrl);
@@ -26,8 +31,8 @@ final class PayoutRequest extends Request
     public function getPayload(): array
     {
         return [
-            'authorization' => $this->authorization,
-            'type' => $this->type,
+            'merchant' => $this->merchant,
+            'type' => $this->type->value,
             'reference' => $this->reference,
             'phone' => $this->phone,
             'amount' => $this->amount,

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Devscast\Flexpay\Request;
 
 use Devscast\Flexpay\Data\Currency;
+use Devscast\Flexpay\Data\Type;
 use Webmozart\Assert\Assert;
 
 /**
@@ -20,7 +21,7 @@ final class MobileRequest extends Request
         Currency $currency,
         string $callbackUrl,
         public readonly string $phone,
-        public readonly int $type = 1,
+        public readonly Type $type = Type::MOBILE,
         ?string $description = null,
         ?string $approveUrl = null,
         ?string $cancelUrl = null,
@@ -36,7 +37,7 @@ final class MobileRequest extends Request
     {
         return [
             'phone' => $this->phone,
-            'type' => $this->type,
+            'type' => $this->type->value,
             'amount' => $this->amount,
             'merchant' => $this->merchant,
             'reference' => $this->reference,
