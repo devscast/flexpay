@@ -71,7 +71,7 @@ after that the payment will be processed and the callback url will be called wit
 $response = $flexpay->pay($mobile);
 ```
 
-### Virtual POS Payment
+### Visa Card Payment
 You can set up card payment via VPOS features, which is typically used for online payments.
 it's a gateway that allows you to accept payments from your customers using their credit cards.
 
