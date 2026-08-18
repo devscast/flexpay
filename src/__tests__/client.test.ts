@@ -1,9 +1,10 @@
 import fs from "node:fs";
 import path from "node:path";
 
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, expectTypeOf, it, vi } from "vitest";
 
 import { Client } from "../client";
+import type { CardResponse, MobileResponse } from "../schemas";
 
 function loadFixture(name: string): unknown {
   const p = path.resolve(__dirname, "fixtures", name);
@@ -277,7 +278,8 @@ describe("Client", () => {
     });
 
     expect(client.isSuccessful(response)).toBe(true);
-    expect((response as any).orderNumber).toBe("DtX9SmCYojWW243123456789");
+    expectTypeOf(response).toEqualTypeOf<MobileResponse>();
+    expect(response.orderNumber).toBe("DtX9SmCYojWW243123456789");
   });
 
   it("should route card payment through pay method", async () => {
@@ -295,7 +297,8 @@ describe("Client", () => {
     });
 
     expect(client.isSuccessful(response)).toBe(true);
-    expect((response as any).orderNumber).toBe("O42iABI27568020268434827");
+    expectTypeOf(response).toEqualTypeOf<CardResponse>();
+    expect(response.orderNumber).toBe("O42iABI27568020268434827");
   });
 
   it("should throw error for unsupported request shape in pay method", async () => {
@@ -465,5 +468,38 @@ describe("Client", () => {
 
     expect(client.isSuccessful(response)).toBe(true);
     expect(response.code).toBe(0);
+  });
+
+  it.each(["", " ", "00", "success"])('should reject malformed status code "%s"', (code) => {
+    expect(() =>
+      client.handleCallback({
+        code,
+        message: "Malformed response",
+      }),
+    ).toThrow();
+  });
+
+  it.each([
+    "",
+    " ",
+    "not-a-number",
+    Number.NaN,
+    Number.POSITIVE_INFINITY,
+  ])('should reject invalid transaction amount "%s"', async (amount) => {
+    mockFetchWithResponse({
+      code: "0",
+      message: "Success",
+      transaction: {
+        amount,
+        amountCustomer: "1.03",
+        channel: "om",
+        createdAt: "06-05-2024 14:36:02",
+        currency: "USD",
+        reference: "test",
+        status: "0",
+      },
+    });
+
+    await expect(client.check("some_order_number")).rejects.toThrow();
   });
 });

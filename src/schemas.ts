@@ -21,17 +21,25 @@ export const CredentialSchema = z.object({
 
 export type Credential = z.infer<typeof CredentialSchema>;
 
-const StatusCoerce = z
-  .union([z.string(), z.number()])
-  .transform((v) => (typeof v === "string" ? Number(v) : v))
-  .refine((n) => n === Status.SUCCESS || n === Status.FAILURE, "Invalid status code")
-  .transform((n) => n as Status);
+export const StatusSchema = z
+  .union([z.literal(Status.SUCCESS), z.literal(Status.FAILURE), z.literal("0"), z.literal("1")])
+  .transform((value) => Number(value) as Status);
+
+const AmountSchema = z.union([
+  z.number().finite(),
+  z
+    .string()
+    .trim()
+    .min(1)
+    .transform((value) => Number(value))
+    .pipe(z.number().finite()),
+]);
 
 const NullableString = z.union([z.string(), z.null()]).optional();
 
 export const MobileResponseSchema = z
   .object({
-    code: StatusCoerce,
+    code: StatusSchema,
     message: z.string().optional().default(""),
     orderNumber: NullableString,
     provider_reference: NullableString,
@@ -43,37 +51,37 @@ export const MobileResponseSchema = z
     code: v.code,
     message: v.message ?? "",
     orderNumber: v.orderNumber ?? null,
-    providerReference: (v as any).providerReference ?? v.provider_reference ?? null,
+    providerReference: v.providerReference ?? v.provider_reference ?? null,
     reference: v.reference ?? null,
     url: v.url ?? null,
   }));
 
 export const CardResponseSchema = z.object({
-  code: StatusCoerce,
+  code: StatusSchema,
   message: z.string().optional().default(""),
   orderNumber: NullableString,
   url: NullableString,
 });
 
 export const TransactionSchema = z.object({
-  amount: z.union([z.string(), z.number()]).transform((v) => Number(v)),
-  amountCustomer: z.union([z.string(), z.number()]).transform((v) => Number(v)),
+  amount: AmountSchema,
+  amountCustomer: AmountSchema,
   channel: NullableString,
   createdAt: z.string(),
   currency: CurrencySchema,
   orderNumber: NullableString,
   reference: z.string(),
-  status: StatusCoerce,
+  status: StatusSchema,
 });
 
 export const CheckResponseSchema = z.object({
-  code: StatusCoerce,
+  code: StatusSchema,
   message: z.string().optional().default(""),
   transaction: z.union([TransactionSchema, z.null()]).optional().default(null),
 });
 
 export const PayoutResponseSchema = z.object({
-  code: StatusCoerce,
+  code: StatusSchema,
   message: z.string().optional().default(""),
   orderNumber: NullableString,
 });

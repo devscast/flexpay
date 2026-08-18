@@ -1,10 +1,23 @@
 {
 	"name": "@devscast/flexpay",
-	"version": "1.0.3",
-	"source": "./src/index.ts",
+	"version": "1.1.0",
 	"main": "./dist/index.js",
 	"types": "./dist/index.d.ts",
 	"module": "./dist/index.mjs",
+	"exports": {
+		".": {
+			"import": {
+				"types": "./dist/index.d.mts",
+				"default": "./dist/index.mjs"
+			},
+			"require": {
+				"types": "./dist/index.d.ts",
+				"default": "./dist/index.js"
+			},
+			"default": "./dist/index.js"
+		},
+		"./package.json": "./package.json"
+	},
 	"files": [
 		"dist",
 		"README.md"
@@ -13,6 +26,7 @@
 		"build": "tsup --minify",
 		"dev": "tsup --watch",
 		"test": "vitest run",
+		"test:types": "tsc --noEmit",
 		"test:watch": "vitest",
 		"============= HUSKY =============": "",
 		"prepare": "husky",
@@ -27,7 +41,7 @@
 	},
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/devscast/flexpay-ts.git"
+		"url": "git+https://github.com/devscast/flexpay.git"
 	},
 	"commitlint": {
 		"extends": [
@@ -51,6 +65,9 @@
 	},
 	"homepage": "https://github.com/devscast/flexpay-ts#readme",
 	"description": "FlexPay API Typescript Client",
+	"dependencies": {
+		"zod": "^4.1.5"
+	},
 	"devDependencies": {
 		"@biomejs/biome": "^2.3.7",
 		"@changesets/cli": "^2.29.7",
@@ -62,7 +79,6 @@
 		"husky": "^9.1.7",
 		"tsup": "^8.5.1",
 		"typescript": "^5.9.3",
-		"vitest": "^3.2.4",
-		"zod": "4.1.5"
+		"vitest": "^3.2.4"
 	}
 }

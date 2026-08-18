@@ -54,9 +54,11 @@ export class Client {
     return this.parseWith(CardResponseSchema, data);
   }
 
+  pay(request: MobileRequest): Promise<MobileResponse>;
+  pay(request: CardRequest): Promise<CardResponse>;
   async pay(request: MobileRequest | CardRequest): Promise<MobileResponse | CardResponse> {
-    if (typeof (request as any).phone === "string") return this.mobile(request as MobileRequest);
-    if (typeof (request as any).homeUrl === "string") return this.card(request as CardRequest);
+    if ("phone" in request && typeof request.phone === "string") return this.mobile(request);
+    if ("homeUrl" in request && typeof request.homeUrl === "string") return this.card(request);
     throw new Error("Unsupported request shape");
   }
 
@@ -77,15 +79,19 @@ export class Client {
     return this.parseWith(PayoutResponseSchema, data);
   }
 
-  handleCallback(data: any): MobileResponse {
+  handleCallback(data: unknown): MobileResponse {
     return this.parseWith(MobileResponseSchema, data);
   }
 
-  isSuccessful(response: { code: Status }): boolean {
+  isSuccessful<T extends { code: Status }>(response: T): response is T & { code: Status.SUCCESS } {
     return response.code === Status.SUCCESS;
   }
 
-  private async requestJson(method: "GET" | "POST", url: string, jsonBody?: unknown): Promise<any> {
+  private async requestJson(
+    method: "GET" | "POST",
+    url: string,
+    jsonBody?: unknown,
+  ): Promise<unknown> {
     const headers: Record<string, string> = {
       Accept: "application/json",
       // Parity with PHP client (auth_bearer); also most FlexPay endpoints expect Bearer
@@ -106,7 +112,7 @@ export class Client {
 
         const contentType = response.headers.get("content-type") || "";
         const isJson = contentType.includes("application/json");
-        let payload: any = {};
+        let payload: unknown = {};
         if (isJson) {
           try {
             payload = await response.json();
@@ -116,9 +122,13 @@ export class Client {
         }
 
         if (!response.ok) {
+          const errorPayload =
+            typeof payload === "object" && payload !== null
+              ? (payload as Record<string, unknown>)
+              : {};
           // Mimic PHP error mapping via NetworkException::create
-          const message = (payload && (payload.message as string)) || "";
-          const type = (payload && (payload.error as string)) || "unknown";
+          const message = typeof errorPayload.message === "string" ? errorPayload.message : "";
+          const type = typeof errorPayload.error === "string" ? errorPayload.error : "unknown";
           const status = response.status;
 
           // Throw mapped subclasses (Account/Client/Server/Network)
@@ -126,7 +136,7 @@ export class Client {
         }
 
         return payload;
-      } catch (err: any) {
+      } catch (err: unknown) {
         // Network errors or thrown mapped exceptions
         // If it's already one of our mapped exceptions, don't retry on 4xx.
         if (
@@ -150,7 +160,7 @@ export class Client {
 
         // Final failure: if it's a native fetch error, wrap it
         if (!(err instanceof NetworkException)) {
-          throw new NetworkException(err?.message ?? "Network error");
+          throw new NetworkException(err instanceof Error ? err.message : "Network error");
         }
         throw err;
       }
