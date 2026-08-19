@@ -1,4 +1,4 @@
-name: Test
+name: Quality
 
 on:
   push:
@@ -7,27 +7,26 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: test-${{ github.workflow }}-${{ github.ref }}
+  group: quality-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 permissions:
   contents: read
 
 jobs:
-  test:
+  quality:
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        node-version: ["24"]
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-node@v6
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: "24"
           package-manager-cache: false
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
       - run: bun install --frozen-lockfile
-      - run: bun run test
+      - run: bun run lint
+      - run: bun run typecheck
+      - run: bun run build
+      - run: bun run check:package

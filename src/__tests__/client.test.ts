@@ -479,27 +479,24 @@ describe("Client", () => {
     ).toThrow();
   });
 
-  it.each([
-    "",
-    " ",
-    "not-a-number",
-    Number.NaN,
-    Number.POSITIVE_INFINITY,
-  ])('should reject invalid transaction amount "%s"', async (amount) => {
-    mockFetchWithResponse({
-      code: "0",
-      message: "Success",
-      transaction: {
-        amount,
-        amountCustomer: "1.03",
-        channel: "om",
-        createdAt: "06-05-2024 14:36:02",
-        currency: "USD",
-        reference: "test",
-        status: "0",
-      },
-    });
+  it.each(["", " ", "not-a-number", Number.NaN, Number.POSITIVE_INFINITY])(
+    'should reject invalid transaction amount "%s"',
+    async (amount) => {
+      mockFetchWithResponse({
+        code: "0",
+        message: "Success",
+        transaction: {
+          amount,
+          amountCustomer: "1.03",
+          channel: "om",
+          createdAt: "06-05-2024 14:36:02",
+          currency: "USD",
+          reference: "test",
+          status: "0",
+        },
+      });
 
-    await expect(client.check("some_order_number")).rejects.toThrow();
-  });
+      await expect(client.check("some_order_number")).rejects.toThrow();
+    },
+  );
 });

@@ -1,39 +1,55 @@
-# Flexpay Typescript
+# FlexPay TypeScript
 
-![npm](https://img.shields.io/npm/v/@devscast/flexpay?style=flat-square)
-![npm](https://img.shields.io/npm/dt/@devscast/flexpay?style=flat-square)
-[![Lint](https://github.com/devscast/flexpay-ts/actions/workflows/lint.yml/badge.svg?branch=main)](https://github.com/devscast/flexpay-ts/actions/workflows/lint.yml)
-[![Tests](https://github.com/devscast/flexpay-ts/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/devscast/flexpay-ts/actions/workflows/test.yml)
-![GitHub](https://img.shields.io/github/license/devscast/flexpay-ts?style=flat-square)
+![npm](https://img.shields.io/npm/v/@ngandu-dev/flexpay?style=flat-square)
+![npm](https://img.shields.io/npm/dt/@ngandu-dev/flexpay?style=flat-square)
+[![Quality](https://github.com/ngandu-dev/flexpay/actions/workflows/quality.yml/badge.svg?branch=main)](https://github.com/ngandu-dev/flexpay/actions/workflows/quality.yml)
+[![Tests](https://github.com/ngandu-dev/flexpay/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/ngandu-dev/flexpay/actions/workflows/test.yml)
+![GitHub](https://img.shields.io/github/license/ngandu-dev/flexpay?style=flat-square)
 
-For privacy reasons, Flexpay original documentation cannot be shared without written permission, for more information about credentials
-and implementation details, please reach them at flexpay.cd
+For privacy reasons, FlexPay's original documentation cannot be shared without written permission.
+For credentials and implementation details, contact [FlexPay](https://flexpay.cd).
+
+## Features
+
+- Typed mobile-money and card payment requests
+- Transaction status checks and callback validation
+- Development and production API environments
+- ESM and CommonJS distributions with TypeScript declarations
+
+## Requirements
+
+- Node.js 24 or newer
 
 ## Installation
-You can use the Typescript client by installing the npm package and adding it to your application’s dependencies:
+
+Add the TypeScript client to your application's dependencies:
 
 ```bash
-npm install @devscast/flexpay
+npm install @ngandu-dev/flexpay
 ```
-## Usage
+
+## Quick start
 
 ### Authentication
-* **Step 1**. Contact Flexpay to get a Merchant Account
+
+- **Step 1**. Contact FlexPay to get a Merchant Account
   You will receive a Merchant Form to complete in order to provide your business details and preferred Cash out Wallet or Banking Details.
-* **Step 2**. Once the paperwork is completed, you will be issued with Live and Sandbox Accounts (Merchant Code and Authorization token)
+- **Step 2**. Once the paperwork is completed, you will be issued with Live and Sandbox Accounts (Merchant Code and Authorization token)
 
 Then use these credentials to authenticate your client
 
 ```ts
-import { Client as Flexpay } from "@devscast/flexpay";
+import { Client as Flexpay } from "@ngandu-dev/flexpay";
 
 const flexpay = new Flexpay("merchant_code", "token", "dev"); // use "prod" for production
 ```
 
+## Usage
+
 ### Create a Payment Request
 
 ```typescript
-import type { CardRequest, MobileRequest } from "@devscast/flexpay";
+import type { CardRequest, MobileRequest } from "@ngandu-dev/flexpay";
 
 const mobile = {
   amount: 10, // 10 USD
@@ -97,8 +113,35 @@ const tx = await flexpay.check(mobileResponse.orderNumber);
 flexpay.isSuccessful(tx); // true or false
 ```
 
+## Migrating to `@ngandu-dev/flexpay`
+
+Replace the dependency and every import with `@ngandu-dev/flexpay`. Version 2 is a clean package
+move and does not provide an alias for the old scope.
+
+## Development
+
+Install dependencies with `bun install`, then run `bun run quality` before opening a pull request.
+See [CONTRIBUTING.md](CONTRIBUTING.md) for the complete contribution workflow.
+
+## Testing
+
+Run `bun run test` for the test suite or `bun run test:coverage` for a coverage report.
+
+## Contributing
+
+Contributions are welcome. Please read [CONTRIBUTING.md](CONTRIBUTING.md) and follow our
+[Code of Conduct](CODE_OF_CONDUCT.md).
+
+## Security
+
+Please report vulnerabilities privately as described in [SECURITY.md](SECURITY.md).
+
+## License
+
+Released under the [MIT License](LICENSE).
+
 ## Contributors
 
-<a href="https://github.com/devscast/flexpay-tz/graphs/contributors" title="show all contributors">
-  <img src="https://contrib.rocks/image?repo=devscast/flexpay-ts" alt="contributors"/>
+<a href="https://github.com/ngandu-dev/flexpay/graphs/contributors" title="Show all contributors">
+  <img src="https://contrib.rocks/image?repo=ngandu-dev/flexpay" alt="Contributors" />
 </a>

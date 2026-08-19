@@ -1,18 +1,18 @@
 {
-	"include": ["./src"],
-	"compilerOptions": {
-		"module": "nodenext",
-		"target": "esnext",
-		"lib": ["esnext"],
-		"declaration": true,
-		"strict": true,
-		"moduleResolution": "nodenext",
-		"skipLibCheck": true,
-		"esModuleInterop": true,
-		"forceConsistentCasingInFileNames": true,
-		"noUncheckedIndexedAccess": true,
-		"noEmit": true,
-		"outDir": "dist",
-		"rootDir": "src"
-	}
+  "include": ["./src"],
+  "compilerOptions": {
+    "module": "nodenext",
+    "target": "esnext",
+    "lib": ["esnext"],
+    "declaration": true,
+    "strict": true,
+    "moduleResolution": "nodenext",
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "noUncheckedIndexedAccess": true,
+    "noEmit": true,
+    "outDir": "dist",
+    "rootDir": "src"
+  }
 }

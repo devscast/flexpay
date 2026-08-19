@@ -1,84 +1,96 @@
 {
-	"name": "@devscast/flexpay",
-	"version": "1.1.0",
-	"main": "./dist/index.js",
-	"types": "./dist/index.d.ts",
-	"module": "./dist/index.mjs",
-	"exports": {
-		".": {
-			"import": {
-				"types": "./dist/index.d.mts",
-				"default": "./dist/index.mjs"
-			},
-			"require": {
-				"types": "./dist/index.d.ts",
-				"default": "./dist/index.js"
-			},
-			"default": "./dist/index.js"
-		},
-		"./package.json": "./package.json"
-	},
-	"files": [
-		"dist",
-		"README.md"
-	],
-	"scripts": {
-		"build": "tsup --minify",
-		"dev": "tsup --watch",
-		"test": "vitest run",
-		"test:types": "tsc --noEmit",
-		"test:watch": "vitest",
-		"============= HUSKY =============": "",
-		"prepare": "husky",
-		"commit": "cz",
-		"=========== CODE STYLE ============": "",
-		"lint": "biome check && biome lint",
-		"format": "biome format --write && biome check --write && biome lint --write",
-		"typecheck": "tsc --noEmit",
-		"=========== NPM PUBLISH ==============": "",
-		"release": "npm run build && npm publish --access public",
-		"version": "changeset version"
-	},
-	"repository": {
-		"type": "git",
-		"url": "git+https://github.com/devscast/flexpay.git"
-	},
-	"commitlint": {
-		"extends": [
-			"@commitlint/config-conventional"
-		]
-	},
-	"config": {
-		"commitizen": {
-			"path": "cz-conventional-changelog"
-		}
-	},
-	"keywords": [
-		"api",
-		"payment-gateway",
-		"mobile-money"
-	],
-	"author": "Bernard Ngandu <bernard@devscast.tech>",
-	"license": "MIT",
-	"bugs": {
-		"url": "https://github.com/devscast/flexpay-ts/issues"
-	},
-	"homepage": "https://github.com/devscast/flexpay-ts#readme",
-	"description": "FlexPay API Typescript Client",
-	"dependencies": {
-		"zod": "^4.1.5"
-	},
-	"devDependencies": {
-		"@biomejs/biome": "^2.3.7",
-		"@changesets/cli": "^2.29.7",
-		"@commitlint/cli": "^19.8.1",
-		"@commitlint/config-conventional": "^19.8.1",
-		"@types/node": "^24.10.1",
-		"commitizen": "^4.3.1",
-		"cz-conventional-changelog": "^3.3.0",
-		"husky": "^9.1.7",
-		"tsup": "^8.5.1",
-		"typescript": "^5.9.3",
-		"vitest": "^3.2.4"
-	}
+  "name": "@ngandu-dev/flexpay",
+  "version": "2.0.0",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "module": "./dist/index.mjs",
+  "type": "commonjs",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.mts",
+        "default": "./dist/index.mjs"
+      },
+      "require": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsup --minify",
+    "check:package": "publint --strict && attw --pack .",
+    "dev": "tsup --watch",
+    "format": "biome check --write .",
+    "lint": "biome check .",
+    "prepack": "bun run build",
+    "prepare": "husky",
+    "quality": "bun run lint && bun run typecheck && bun run test && bun run build && bun run check:package",
+    "release": "npm publish --access public",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit",
+    "version": "changeset version"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ngandu-dev/flexpay.git"
+  },
+  "commitlint": {
+    "extends": [
+      "@commitlint/config-conventional"
+    ]
+  },
+  "keywords": [
+    "api",
+    "payment-gateway",
+    "mobile-money"
+  ],
+  "author": "Bernard Ngandu <bernard@ngandu.dev>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ngandu-dev/flexpay/issues"
+  },
+  "homepage": "https://github.com/ngandu-dev/flexpay#readme",
+  "description": "FlexPay API TypeScript client",
+  "dependencies": {
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@arethetypeswrong/cli": "^0.18.5",
+    "@biomejs/biome": "^2.5.9",
+    "@changesets/cli": "^3.0.1",
+    "@commitlint/cli": "^21.2.2",
+    "@commitlint/config-conventional": "^21.2.2",
+    "@types/node": "^26.2.0",
+    "@vitest/coverage-v8": "^4.1.11",
+    "husky": "^9.1.7",
+    "publint": "^0.3.24",
+    "tsup": "^8.5.1",
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.11"
+  },
+  "overrides": {
+    "ajv": "8.18.0",
+    "esbuild": "0.28.1",
+    "fast-uri": "3.1.5",
+    "js-yaml": "4.3.1",
+    "nanoid": "3.3.18",
+    "picomatch": "4.0.5",
+    "postcss": "8.5.26",
+    "rollup": "4.62.4",
+    "vite": "8.2.1"
+  },
+  "engines": {
+    "node": ">=24"
+  },
+  "packageManager": "bun@1.3.14",
+  "sideEffects": false
 }

@@ -1,4 +1,4 @@
-name: Publish Package
+name: Release
 
 on:
   release:
@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: npm-publish
+  group: release-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: false
 
 permissions:
@@ -14,36 +14,19 @@ permissions:
   id-token: write
 
 jobs:
-  publish:
-    name: publish to npm
+  release:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v6
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v6
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
         with:
-          node-version: 24
+          node-version: "24"
           registry-url: https://registry.npmjs.org
           package-manager-cache: false
-
-      - name: Update npm
-        run: npm install --global npm@latest
-
-      - name: Setup Bun
-        uses: oven-sh/setup-bun@v2
-
-      - name: Install Dependencies
-        run: bun install --frozen-lockfile
-
-      - name: Validate Package
-        run: |
-          bun run lint
-          bun run typecheck
-          bun run test
-          bun run build
-
-      - name: Publish Package
-        run: npm publish --access public
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+      - run: npm install --global npm@latest
+      - run: bun install --frozen-lockfile
+      - run: bun run quality
+      - run: npm publish --access public

@@ -1,5 +1,5 @@
 {
-  "$schema": "https://biomejs.dev/schemas/2.3.7/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.5.9/schema.json",
   "assist": {
     "actions": {
       "source": {
@@ -18,16 +18,13 @@
             "identifierOrder": "lexicographic"
           }
         },
-        "useSortedAttributes": "on",
-        "useSortedKeys": "on",
-        "useSortedProperties": "on"
+        "useSortedAttributes": "on"
       }
     },
     "enabled": true
   },
   "files": {
-    "ignoreUnknown": true,
-    "includes": ["src/**"]
+    "ignoreUnknown": true
   },
   "formatter": {
     "enabled": true,
@@ -48,7 +45,7 @@
         "noUnusedImports": "on",
         "useImportExtensions": "off"
       },
-      "recommended": true,
+      "preset": "recommended",
       "style": {
         "noNonNullAssertion": "off",
         "useImportType": "off"
