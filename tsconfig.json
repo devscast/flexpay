@@ -4,6 +4,7 @@
     "module": "nodenext",
     "target": "esnext",
     "lib": ["esnext"],
+    "types": ["node"],
     "declaration": true,
     "strict": true,
     "moduleResolution": "nodenext",

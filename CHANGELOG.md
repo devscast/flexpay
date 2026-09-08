@@ -3,6 +3,14 @@
 All notable changes to `@ngandu-dev/flexpay` are documented in this file. This project follows
 [Semantic Versioning](https://semver.org/).
 
+## 2.0.1
+
+### Patch Changes
+
+- Remove Commitlint and its transitive dependencies, configuration, and commit-message hook while preserving pre-commit validation. Refresh compatible dependencies and the Bun lockfile.
+
+  Upgrade to Zod 4.5.4, Vitest 5, and TypeScript 6.0.3. Explicitly load Node.js types for the updated compiler; retain the TypeScript compiler API required by tsup declaration generation and accommodate its internally generated deprecated compiler option.
+
 ## 2.0.0
 
 ### Changed
